@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Регистрация - Детский сад</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="auth-page">
+    <div class="clouds-background">
+        <div class="cloud cloud-1"></div>
+        <div class="cloud cloud-2"></div>
+        <div class="cloud cloud-3"></div>
+    </div>
+    
+    <div class="auth-container">
+        <div class="auth-card">
+            <!-- Форма регистрации -->
+            <div id="registerForm">
+                <h1>🌸 Регистрация 🌸</h1>
+                <p class="subtitle">Введите ваш email и пароль, чтобы зарегистрироваться</p>
+                
+                <form onsubmit="handleRegister(event)">
+                    <div class="form-group">
+                        <input type="email" id="regEmail" placeholder="email@domain.com" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <input type="password" id="regPassword" placeholder="Пароль" required minlength="6">
+                    </div>
+                    
+                    <div class="form-group">
+                        <input type="text" id="regFullName" placeholder="Ваше ФИО" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <select id="regRole" required>
+                            <option value="">Выберите роль</option>
+                            <!-- ⚠️ ВАЖНО: значения в нижнем регистре! -->
+                            <option value="admin">Администратор</option>
+                            <option value="teacher">Воспитатель</option>
+                            <option value="accountant">Бухгалтер</option>
+                        </select>
+                    </div>
+                    
+                    <button type="submit" class="btn-primary">Зарегистрироваться</button>
+                </form>
+                
+                <div class="auth-footer">
+                    <p>Уже есть аккаунт? <a href="#" onclick="showLogin()">Войти</a></p>
+                    <p class="copyright">© Все права защищены</p>
+                </div>
+            </div>
+
+            <!-- Форма входа -->
+            <div id="loginForm" style="display: none;">
+                <h1>🔐 Вход 🔐</h1>
+                <p class="subtitle">Введите ваш email и пароль для входа</p>
+                
+                <form onsubmit="handleLogin(event)">
+                    <div class="form-group">
+                        <input type="email" id="loginEmail" placeholder="email@domain.com" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <input type="password" id="loginPassword" placeholder="Пароль" required>
+                    </div>
+                    
+                    <button type="submit" class="btn-primary">Войти</button>
+                </form>
+                
+                <div class="auth-footer">
+                    <p>Нет аккаунта? <a href="#" onclick="showRegister()">Зарегистрироваться</a></p>
+                    <p class="copyright">© Все права защищены</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ===== ПЕРЕКЛЮЧЕНИЕ ФОРМ =====
+        function showLogin() {
+            document.getElementById('registerForm').style.display = 'none';
+            document.getElementById('loginForm').style.display = 'block';
+        }
+
+        function showRegister() {
+            document.getElementById('loginForm').style.display = 'none';
+            document.getElementById('registerForm').style.display = 'block';
+        }
+
+        // ===== УВЕДОМЛЕНИЯ =====
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 15px 25px;
+                background: ${type === 'success' ? '#48bb78' : type === 'error' ? '#f56565' : '#4299e1'};
+                color: white;
+                border-radius: 10px;
+                box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+                z-index: 9999;
+            `;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => notification.remove(), 3000);
+        }
+
+        // ===== РЕГИСТРАЦИЯ =====
+        async function handleRegister(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('regEmail').value.trim();
+            const password = document.getElementById('regPassword').value;
+            const full_name = document.getElementById('regFullName').value.trim();
+            const role = document.getElementById('regRole').value;
+            
+            if (password.length < 6) {
+                showNotification('Пароль должен быть не менее 6 символов', 'error');
+                return;
+            }
+            
+            try {
+                // Используем функцию из api.js
+                const response = await fetch('http://127.0.0.1:8000/auth/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        email,
+                        password,
+                        full_name,
+                        role
+                    })
+                });
+                
+                if (response.ok) {
+                    showNotification('Регистрация успешна! Теперь войдите.', 'success');
+                    showLogin();
+                } else {
+                    const error = await response.json();
+                    const message = error.detail || 'Ошибка регистрации';
+                    showNotification(message, 'error');
+                }
+            } catch (error) {
+                console.error('Ошибка:', error);
+                showNotification('Ошибка подключения к серверу', 'error');
+            }
+        }
+
+        // ===== ВХОД =====
+        async function handleLogin(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('loginEmail').value.trim();
+            const password = document.getElementById('loginPassword').value;
+            
+            try {
+                const formData = new FormData();
+                formData.append('username', email);
+                formData.append('password', password);
+                
+                const response = await fetch('http://127.0.0.1:8000/auth/login', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    
+                    // Сохраняем токен
+                    localStorage.setItem('jwt_token', data.access_token);
+                    
+                    // Декодируем токен для получения роли
+                    const payload = JSON.parse(atob(data.access_token.split('.')[1]));
+                    const role = payload.role?.toLowerCase();
+                    
+                    localStorage.setItem('userRole', role);
+                    localStorage.setItem('userEmail', email);
+                    localStorage.setItem('userName', payload.full_name || email);
+                    localStorage.setItem('isLoggedIn', 'true');
+                    
+                    showNotification('Вход выполнен успешно!', 'success');
+                    
+                    // Перенаправление по роли
+                    setTimeout(() => {
+                        switch(role) {
+                            case 'admin':
+                                window.location.href = 'admin.html';
+                                break;
+                            case 'teacher':
+                                window.location.href = 'teacher.html';
+                                break;
+                            case 'accountant':
+                                window.location.href = 'accountant.html';
+                                break;
+                            default:
+                                showNotification('Неизвестная роль пользователя', 'error');
+                        }
+                    }, 500);
+                    
+                } else {
+                    const error = await response.json();
+                    showNotification(error.detail || 'Неверный email или пароль', 'error');
+                }
+            } catch (error) {
+                console.error('Ошибка:', error);
+                showNotification('Ошибка подключения к серверу', 'error');
+            }
+        }
+
+        // Проверка авторизации при загрузке
+        document.addEventListener('DOMContentLoaded', () => {
+            const token = localStorage.getItem('jwt_token');
+            const role = localStorage.getItem('userRole');
+            
+            if (token && role) {
+                // Если уже авторизован, перенаправляем
+                switch(role) {
+                    case 'admin':
+                        window.location.href = 'admin.html';
+                        break;
+                    case 'teacher':
+                        window.location.href = 'teacher.html';
+                        break;
+                    case 'accountant':
+                        window.location.href = 'accountant.html';
+                        break;
+                }
+            }
+        });
+    </script>
+    <script src="js/api.js"></script>
+</body>
+</html>

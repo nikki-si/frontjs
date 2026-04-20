@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Журнал посещаемости - Воспитатель</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="teacher-page">
+    <div class="clouds-background">
+        <div class="cloud cloud-1"></div>
+        <div class="cloud cloud-2"></div>
+    </div>
+
+    <div class="container">
+        <header class="header">
+            <div class="header-content">
+                <h1 id="teacherName">Иванова Мария Петровна</h1>
+                <span class="position">Воспитатель</span>
+            </div>
+            <button class="btn-logout" onclick="logout()">Выйти</button>
+        </header>
+
+        <div class="control-panel">
+            <div class="control-group">
+                <label for="groupSelect">Выберите группу:</label>
+                <select id="groupSelect" onchange="changeGroup()">
+                    <option value="1">Старшая группа</option>
+                    <option value="2">Средняя группа</option>
+                    <option value="3">Младшая группа</option>
+                    <option value="4">Подготовительная группа</option>
+                </select>
+            </div>
+
+            <div class="control-group">
+                <button class="btn-nav" onclick="changeMonth(-1)">◀</button>
+                <div class="month-display" id="monthDisplay">Март 2026</div>
+                <button class="btn-nav" onclick="changeMonth(1)">▶</button>
+            </div>
+
+            <div class="control-group">
+                <button class="btn-mass" onclick="markAllPresent()">✅ Все + (сегодня)</button>
+                <button class="btn-mass-absent" onclick="markAllAbsent()">❌ Все - (сегодня)</button>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <table class="attendance-table" id="attendanceTable">
+                <thead>
+                    <tr>
+                        <th class="name-col">Фамилия Имя ребенка</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody"></tbody>
+                <tfoot>
+                    <tr class="summary-row">
+                        <td class="name-col"><strong>Итого присутствующих:</strong></td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+        <div class="summary-info">
+            <div class="summary-card">
+                <span class="summary-label">Всего детей:</span>
+                <span class="summary-value" id="totalChildren">8</span>
+            </div>
+            <div class="summary-card">
+                <span class="summary-label">Присутствует сегодня:</span>
+                <span class="summary-value" id="presentToday">0</span>
+            </div>
+            <div class="summary-card">
+                <span class="summary-label">Отсутствует:</span>
+                <span class="summary-value" id="absentToday">8</span>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/teacher.js"></script>
+</body>
+</html>

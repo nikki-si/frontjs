@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Панель администратора</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="admin-page">
+    <div class="clouds-background">
+        <div class="cloud cloud-1"></div>
+        <div class="cloud cloud-2"></div>
+    </div>
+
+    <div class="container">
+        <!-- Боковое меню -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">☁️</div>
+                <h2>Админ-панель</h2>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-item active" data-section="attendance">
+                    <span class="nav-icon">📊</span>
+                    <span>Посещаемость</span>
+                </a>
+                <a href="#" class="nav-item" data-section="users">
+                    <span class="nav-icon">👥</span>
+                    <span>Пользователи</span>
+                </a>
+                <a href="#" class="nav-item" data-section="reports">
+                    <span class="nav-icon">📄</span>
+                    <span>Отчёты</span>
+                </a>
+                <a href="#" class="nav-item" data-section="statistics">
+                    <span class="nav-icon">📈</span>
+                    <span>Статистика</span>
+                </a>
+                <a href="#" class="nav-item" data-section="settings">
+                    <span class="nav-icon">⚙️</span>
+                    <span>Настройки</span>
+                </a>
+                <a href="#" class="nav-item" onclick="logout()">
+                    <span class="nav-icon">🚪</span>
+                    <span>Выйти</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Основной контент -->
+        <main class="main-content">
+            <!-- Секция: Посещаемость -->
+            <div id="section-attendance" class="admin-section active">
+                <div class="big-stat">
+                    <h3>Общий уровень посещаемости</h3>
+                    <p class="big-value">94.7%</p>
+                </div>
+
+                <div class="users-list">
+                    <h3>Управление пользователями</h3>
+                    <div class="user-item">
+                        <div class="user-avatar">👩‍🏫</div>
+                        <div class="user-info">
+                            <strong>Анна Петрова</strong>
+                            <span>Администратор</span>
+                        </div>
+                        <button class="btn-small">→</button>
+                    </div>
+                    <div class="user-item">
+                        <div class="user-avatar">👨‍</div>
+                        <div class="user-info">
+                            <strong>Дмитрий Соколов</strong>
+                            <span>Воспитатель</span>
+                        </div>
+                        <button class="btn-small">→</button>
+                    </div>
+                    <div class="user-item">
+                        <div class="user-avatar">👩‍⚕️</div>
+                        <div class="user-info">
+                            <strong>Елена Волкова</strong>
+                            <span>Медсестра</span>
+                        </div>
+                        <button class="btn-small">→</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Секция: Пользователи -->
+            <div id="section-users" class="admin-section">
+                <div class="section-header">
+                    <h3>Все пользователи</h3>
+                    <button class="btn-primary" onclick="addUser()">+ Добавить пользователя</button>
+                </div>
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>ФИО</th>
+                            <th>Роль</th>
+                            <th>Email</th>
+                            <th>Группа</th>
+                            <th>Статус</th>
+                            <th>Действия</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Иванова Мария Петровна</td>
+                            <td>Воспитатель</td>
+                            <td>ivanova@sad.ru</td>
+                            <td>Старшая группа</td>
+                            <td><span class="status active">Активен</span></td>
+                            <td>
+                                <button class="btn-icon">✏️</button>
+                                <button class="btn-icon">🗑️</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Петрова Анна Сергеевна</td>
+                            <td>Бухгалтер</td>
+                            <td>petrova@sad.ru</td>
+                            <td>-</td>
+                            <td><span class="status active">Активен</span></td>
+                            <td>
+                                <button class="btn-icon">✏️</button>
+                                <button class="btn-icon">🗑️</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Секция: Отчёты -->
+            <div id="section-reports" class="admin-section">
+                <div class="section-header">
+                    <h3>Управление отчётами</h3>
+                    <button class="btn-primary" onclick="createReport()">+ Создать отчёт</button>
+                </div>
+                
+                <div class="reports-list">
+                    <div class="report-item">
+                        <div class="report-info">
+                            <strong>Ежемесячный отчёт - Март 2026</strong>
+                            <span>Создан: 19.03.2026 | Бухгалтер: Петрова А.С.</span>
+                        </div>
+                        <div class="report-actions">
+                            <button class="btn-small">📥 Скачать</button>
+                            <button class="btn-delete" onclick="deleteReport(this)">🗑️ Удалить</button>
+                        </div>
+                    </div>
+                    <div class="report-item">
+                        <div class="report-info">
+                            <strong>Ежемесячный отчёт - Февраль 2026</strong>
+                            <span>Создан: 28.02.2026 | Бухгалтер: Петрова А.С.</span>
+                        </div>
+                        <div class="report-actions">
+                            <button class="btn-small">📥 Скачать</button>
+                            <button class="btn-delete" onclick="deleteReport(this)">🗑️ Удалить</button>
+                        </div>
+                    </div>
+                    <div class="report-item">
+                        <div class="report-info">
+                            <strong>Финансовый отчёт - Q1 2026</strong>
+                            <span>Создан: 01.03.2026 | Бухгалтер: Петрова А.С.</span>
+                        </div>
+                        <div class="report-actions">
+                            <button class="btn-small">📥 Скачать</button>
+                            <button class="btn-delete" onclick="deleteReport(this)">🗑️ Удалить</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Секция: Статистика -->
+            <div id="section-statistics" class="admin-section">
+                <div class="stats-grid">
+                    <div class="stat-box">
+                        <h4>Активных:</h4>
+                        <p class="stat-number">28</p>
+                    </div>
+                    <div class="stat-box">
+                        <h4>Новых за месяц:</h4>
+                        <p class="stat-number">5</p>
+                    </div>
+                    <div class="stat-box">
+                        <h4>Среднее время сессии:</h4>
+                        <p class="stat-number">12 мин</p>
+                    </div>
+                    <div class="stat-box">
+                        <h4>Ошибки API:</h4>
+                        <p class="stat-number">0</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Секция: Настройки -->
+            <div id="section-settings" class="admin-section">
+                <div class="settings-group">
+                    <h3>Системные настройки</h3>
+                    
+                    <div class="setting-item">
+                        <label>Уведомления включены</label>
+                        <label class="switch">
+                            <input type="checkbox" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+
+                    <div class="setting-item">
+                        <label>Автосохранение</label>
+                        <label class="switch">
+                            <input type="checkbox" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+
+                    <div class="setting-item">
+                        <label>Язык интерфейса:</label>
+                        <select>
+                            <option>Русский</option>
+                            <option>English</option>
+                        </select>
+                    </div>
+
+                    <div class="setting-item">
+                        <label>Режим обслуживания:</label>
+                        <label class="switch">
+                            <input type="checkbox">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+
+                    <button class="btn-primary" onclick="saveSettings()">Сохранить настройки</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/admin.js"></script>
+    <script src="js/api.js"></script>
+</body>
+</html>

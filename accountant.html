@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Кабинет бухгалтера</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="accountant-page">
+    <div class="clouds-background">
+        <div class="cloud cloud-1"></div>
+        <div class="cloud cloud-2"></div>
+    </div>
+
+    <div class="container">
+        <header class="header">
+            <div class="header-content">
+                <h1 id="accountantName">Петрова Анна Сергеевна</h1>
+                <span class="position">Бухгалтер/Аналитик</span>
+            </div>
+            <button class="btn-logout" onclick="logout()">Выйти</button>
+        </header>
+
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('journal')">Журнал посещаемости</button>
+            <button class="tab-btn" onclick="switchTab('statistics')">Статистика</button>
+            <button class="tab-btn" onclick="switchTab('reports')">Отчёты</button>
+            <button class="tab-btn" onclick="switchTab('ai')">AI Прогноз</button>
+        </div>
+
+        <div class="tab-content">
+            <!-- Вкладка: Журнал -->
+            <div id="journal" class="tab-panel active">
+                <div class="stats-cards">
+                    <div class="stat-card">
+                        <h3>Всего детей:</h3>
+                        <p class="stat-value">142</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Уровень посещаемости:</h3>
+                        <p class="stat-value">94.3%</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Ежемесячно:</h3>
+                        <p class="stat-value">2850 посещений</p>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <table class="read-only-table">
+                        <thead>
+                            <tr>
+                                <th>ФИО</th>
+                                <th>Группа</th>
+                                <th>Посещено</th>
+                                <th>Пропущено</th>
+                                <th>%</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Анна Петрова</td>
+                                <td>Группа Б</td>
+                                <td>22</td>
+                                <td>1</td>
+                                <td>95.7%</td>
+                            </tr>
+                            <tr>
+                                <td>Дмитрий Соколов</td>
+                                <td>Группа А</td>
+                                <td>20</td>
+                                <td>3</td>
+                                <td>87.0%</td>
+                            </tr>
+                            <tr>
+                                <td>Елена Волкова</td>
+                                <td>Группа В</td>
+                                <td>23</td>
+                                <td>0</td>
+                                <td>100%</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Вкладка: Статистика -->
+            <div id="statistics" class="tab-panel">
+                <div class="chart-container">
+                    <h3>Посещаемость по группам</h3>
+                    <div class="bar-chart-wrapper">
+                        <div class="bar-item">
+                            <div class="bar" style="height: 184px;">
+                                <span class="bar-value-inside">92%</span>
+                            </div>
+                            <span class="bar-label">Группа А</span>
+                        </div>
+                        <div class="bar-item">
+                            <div class="bar" style="height: 192px;">
+                                <span class="bar-value-inside">96%</span>
+                            </div>
+                            <span class="bar-label">Группа Б</span>
+                        </div>
+                        <div class="bar-item">
+                            <div class="bar" style="height: 188px;">
+                                <span class="bar-value-inside">94%</span>
+                            </div>
+                            <span class="bar-label">Группа В</span>
+                        </div>
+                        <div class="bar-item">
+                            <div class="bar" style="height: 190px;">
+                                <span class="bar-value-inside">95%</span>
+                            </div>
+                            <span class="bar-label">Группа Г</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chart-container">
+                    <h3>Динамика посещаемости (7 дней)</h3>
+                    <div class="line-chart-wrapper">
+                        <svg class="line-svg" viewBox="0 0 500 200" preserveAspectRatio="none">
+                            <!-- Линия графика -->
+                            <polyline points="50,140 120,120 190,150 260,80 330,100 400,160 470,170" 
+                                      fill="none" stroke="#ffb6c1" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                            <!-- Точки -->
+                            <circle cx="50" cy="140" r="6" fill="#ffb6c1" stroke="white" stroke-width="2"/>
+                            <circle cx="120" cy="120" r="6" fill="#ffb6c1" stroke="white" stroke-width="2"/>
+                            <circle cx="190" cy="150" r="6" fill="#ffb6c1" stroke="white" stroke-width="2"/>
+                            <circle cx="260" cy="80" r="6" fill="#ffb6c1" stroke="white" stroke-width="2"/>
+                            <circle cx="330" cy="100" r="6" fill="#ffb6c1" stroke="white" stroke-width="2"/>
+                            <circle cx="400" cy="160" r="6" fill="#ffb6c1" stroke="white" stroke-width="2"/>
+                            <circle cx="470" cy="170" r="6" fill="#ffb6c1" stroke="white" stroke-width="2"/>
+                        </svg>
+                        <div class="line-labels">
+                            <span>Пн</span>
+                            <span>Вт</span>
+                            <span>Ср</span>
+                            <span>Чт</span>
+                            <span>Пт</span>
+                            <span>Сб</span>
+                            <span>Вс</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Вкладка: Отчёты -->
+            <div id="reports" class="tab-panel">
+                <div class="reports-section">
+                    <h3>Генерация отчётов</h3>
+                    <div class="report-options">
+                        <div class="report-option">
+                            <label>Тип отчёта:</label>
+                            <select id="reportType">
+                                <option>Ежемесячный отчёт</option>
+                                <option>Отчёт по посещаемости</option>
+                                <option>Финансовый отчёт</option>
+                            </select>
+                        </div>
+                        <div class="report-option">
+                            <label>Период:</label>
+                            <input type="month" id="reportMonth" value="2026-03">
+                        </div>
+                        <button class="btn-primary" onclick="generateReport()">Сгенерировать PDF</button>
+                        <button class="btn-secondary" onclick="exportToExcel()">Экспорт в Excel</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Вкладка: AI Прогноз -->
+            <div id="ai" class="tab-panel">
+                <div class="ai-section">
+                    <h3>🤖 AI-прогноз рисков</h3>
+                    <div class="ai-cards">
+                        <div class="ai-card risk-low">
+                            <div class="ai-icon">🟢</div>
+                            <h4>Риск заболеваний:</h4>
+                            <p class="ai-value">Низкий</p>
+                            <p class="ai-desc">Текущая ситуация стабильна</p>
+                        </div>
+                        <div class="ai-card risk-medium">
+                            <div class="ai-icon">🟡</div>
+                            <h4>Риск отсутствия:</h4>
+                            <p class="ai-value">Средний</p>
+                            <p class="ai-desc">Ожидаются сезонные простуды</p>
+                        </div>
+                        <div class="ai-card risk-high">
+                            <div class="ai-icon">🔴</div>
+                            <h4>Риск переходящей группы:</h4>
+                            <p class="ai-value">Высокий</p>
+                            <p class="ai-desc">Требуется внимание к адаптации</p>
+                        </div>
+                    </div>
+                    <div class="ai-info">
+                        <p><strong>Точность прогноза:</strong> 86%</p>
+                        <p><strong>На основе:</strong> температуры, посещаемости, жалоб родителей</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/accountant.js"></script>
+    <script src="js/api.js"></script>
+</body>
+</html>
