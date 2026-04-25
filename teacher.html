@@ -3,80 +3,171 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Журнал посещаемости - Воспитатель</title>
-    <link rel="stylesheet" href="css/style.css">
+    <title>Воспитатель - Детский сад</title>
+    <link rel="stylesheet" href="style.css">
 </head>
-<body class="teacher-page">
+<body>
+    <!-- Фон с облачками -->
     <div class="clouds-background">
         <div class="cloud cloud-1"></div>
         <div class="cloud cloud-2"></div>
+        <div class="cloud cloud-3"></div>
     </div>
 
     <div class="container">
+        <!-- Шапка -->
         <header class="header">
             <div class="header-content">
-                <h1 id="teacherName">Иванова Мария Петровна</h1>
-                <span class="position">Воспитатель</span>
+                <h1>🌸 Кабинет воспитателя</h1>
+                <span class="position" id="teacherName">Загрузка...</span>
             </div>
-            <button class="btn-logout" onclick="logout()">Выйти</button>
+            <button class="btn-logout" onclick="logout()">🚪 Выйти</button>
         </header>
 
+        <!-- Панель управления -->
         <div class="control-panel">
             <div class="control-group">
-                <label for="groupSelect">Выберите группу:</label>
+                <label for="groupSelect">👧 Группа:</label>
                 <select id="groupSelect" onchange="changeGroup()">
-                    <option value="1">Старшая группа</option>
-                    <option value="2">Средняя группа</option>
-                    <option value="3">Младшая группа</option>
-                    <option value="4">Подготовительная группа</option>
+                    <option value="">Загрузка...</option>
                 </select>
             </div>
-
             <div class="control-group">
                 <button class="btn-nav" onclick="changeMonth(-1)">◀</button>
-                <div class="month-display" id="monthDisplay">Март 2026</div>
+                <span class="month-display" id="monthDisplay">Апрель 2026</span>
                 <button class="btn-nav" onclick="changeMonth(1)">▶</button>
             </div>
-
             <div class="control-group">
-                <button class="btn-mass" onclick="markAllPresent()">✅ Все + (сегодня)</button>
-                <button class="btn-mass-absent" onclick="markAllAbsent()">❌ Все - (сегодня)</button>
+                <button class="btn-mass" onclick="markAllPresent()">✅ Все присутствуют</button>
+                <button class="btn-mass-absent" onclick="markAllAbsent()">❌ Все отсутствуют</button>
             </div>
         </div>
 
+        <!-- Таблица посещаемости -->
         <div class="table-container">
-            <table class="attendance-table" id="attendanceTable">
+            <table class="attendance-table">
                 <thead>
                     <tr>
-                        <th class="name-col">Фамилия Имя ребенка</th>
+                        <th>ФИО ребёнка</th>
+                        <!-- Даты добавляются динамически -->
                     </tr>
                 </thead>
-                <tbody id="tableBody"></tbody>
+                <tbody id="tableBody">
+                    <!-- Строки добавляются динамически -->
+                </tbody>
                 <tfoot>
                     <tr class="summary-row">
-                        <td class="name-col"><strong>Итого присутствующих:</strong></td>
+                        <td><strong>Итого</strong></td>
+                        <!-- Итоги добавляются динамически -->
                     </tr>
                 </tfoot>
             </table>
         </div>
 
+        <!-- Итоговая информация -->
         <div class="summary-info">
             <div class="summary-card">
-                <span class="summary-label">Всего детей:</span>
-                <span class="summary-value" id="totalChildren">8</span>
+                <span class="summary-label">Всего детей</span>
+                <span class="summary-value" id="totalChildren">0</span>
             </div>
             <div class="summary-card">
-                <span class="summary-label">Присутствует сегодня:</span>
+                <span class="summary-label">Присутствуют сегодня</span>
                 <span class="summary-value" id="presentToday">0</span>
             </div>
             <div class="summary-card">
-                <span class="summary-label">Отсутствует:</span>
-                <span class="summary-value" id="absentToday">8</span>
+                <span class="summary-label">Отсутствуют сегодня</span>
+                <span class="summary-value" id="absentToday">0</span>
+            </div>
+        </div>
+
+        <!-- Вкладки -->
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('journal')">📋 Журнал</button>
+            <button class="tab-btn" onclick="switchTab('statistics')">📈 Статистика</button>
+            <button class="tab-btn" onclick="switchTab('reports')">📄 Отчёты</button>
+            <button class="tab-btn" onclick="switchTab('ai')">🤖 AI Прогноз</button>
+        </div>
+
+        <!-- Контент вкладок -->
+        <div class="tab-content">
+            <!-- Журнал (активен по умолчанию) -->
+            <div id="journal" class="tab-panel active">
+                <p style="color: #718096; text-align: center;">📊 Данные отображаются в таблице выше</p>
+            </div>
+
+            <!-- Статистика -->
+            <div id="statistics" class="tab-panel">
+                <div class="stats-cards">
+                    <div class="stat-card">
+                        <h3>Средняя посещаемость</h3>
+                        <div class="stat-value" id="avgAttendance">—</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Лучший день</h3>
+                        <div class="stat-value" id="bestDay">—</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Дней в месяце</h3>
+                        <div class="stat-value" id="daysCount">—</div>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <div class="bar-chart" id="attendanceChart">
+                        <!-- График добавляется динамически -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Отчёты -->
+            <div id="reports" class="tab-panel">
+                <div class="report-options">
+                    <div class="report-option">
+                        <label>Тип отчёта:</label>
+                        <select id="reportType">
+                            <option value="monthly">Ежемесячный</option>
+                            <option value="attendance">По посещаемости</option>
+                            <option value="financial">Финансовый</option>
+                        </select>
+                    </div>
+                    <div class="report-option">
+                        <label>Период:</label>
+                        <input type="month" id="reportMonth">
+                    </div>
+                    <button class="btn-small" onclick="generateReport()">📄 Сгенерировать</button>
+                    <button class="btn-secondary" onclick="exportToExcel()">📥 Экспорт в Excel</button>
+                </div>
+                <div id="reportResult" style="margin-top: 20px; color: #718096;"></div>
+            </div>
+
+            <!-- AI Прогноз -->
+            <div id="ai" class="tab-panel">
+                <div class="ai-cards">
+                    <div class="ai-card risk-low">
+                        <div class="ai-icon">🟢</div>
+                        <div class="ai-value" id="aiDisease">Загрузка...</div>
+                        <div class="ai-desc">Риск заболеваний</div>
+                    </div>
+                    <div class="ai-card risk-medium">
+                        <div class="ai-icon">🟡</div>
+                        <div class="ai-value" id="aiAbsence">Загрузка...</div>
+                        <div class="ai-desc">Риск отсутствия</div>
+                    </div>
+                    <div class="ai-card risk-high">
+                        <div class="ai-icon">🔴</div>
+                        <div class="ai-value" id="aiTransition">Загрузка...</div>
+                        <div class="ai-desc">Риск адаптации</div>
+                    </div>
+                </div>
+                <div class="ai-info" style="text-align: center; color: #718096;">
+                    <p><strong>Точность прогноза:</strong> <span id="aiAccuracy">—</span>%</p>
+                    <p style="font-size: 12px; margin-top: 10px;">На основе: температуры, посещаемости, жалоб родителей</p>
+                </div>
             </div>
         </div>
     </div>
 
-    <script src="js/api.js"></script>
-    <script src="js/teacher.js"></script>
+    <!-- Скрипты -->
+    <script src="api.js"></script>
+    <script src="teacher.js"></script>
 </body>
 </html>

@@ -1,8 +1,7 @@
-// настройки API 
-const API_BASE_URL = 'http://localhost:8000';
+// ✅ НАСТРОЙКИ API
+const API_BASE_URL = 'http://localhost:8000'; // FastAPI по умолчанию на 8000
 
-// вспомогательные функции 
-
+// ===== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ =====
 function getToken() {
     return localStorage.getItem('jwt_token');
 }
@@ -19,32 +18,46 @@ function clearToken() {
     localStorage.removeItem('isLoggedIn');
 }
 
-function getAuthHeaders() {
+function getAuthHeaders(isFormData = false) {
     const token = getToken();
-    return {
-        'Content-Type': 'application/json',
+    const headers = {
         'Authorization': token ? `Bearer ${token}` : ''
     };
+    if (!isFormData) {
+        headers['Content-Type'] = 'application/json';
+    }
+    // Если isFormData — браузер сам выставит multipart/form-data с boundary
+    return headers;
 }
 
 async function apiRequest(endpoint, options = {}) {
     const url = `${API_BASE_URL}${endpoint}`;
+    const isFormData = options.body instanceof FormData;
     
     const config = {
         ...options,
         headers: {
-            ...getAuthHeaders(),
+            ...getAuthHeaders(isFormData),
             ...options.headers
         }
     };
-    
+
     try {
         const response = await fetch(url, config);
         
+        // 🔐 Обработка 401 — сессия истекла
         if (response.status === 401) {
             clearToken();
-            window.location.href = 'index.html';
-            throw new Error('Необходима авторизация');
+            const error = new Error('SESSION_EXPIRED');
+            error.code = 401;
+            throw error;
+        }
+        
+        // 🔒 Обработка 403 — нет прав
+        if (response.status === 403) {
+            const error = new Error('ACCESS_DENIED');
+            error.code = 403;
+            throw error;
         }
         
         if (!response.ok) {
@@ -59,13 +72,15 @@ async function apiRequest(endpoint, options = {}) {
         
         return await response.json();
     } catch (error) {
+        if (error.message === 'Failed to fetch') {
+            throw new Error('SERVER_UNREACHABLE');
+        }
         console.error('API Error:', error);
         throw error;
     }
 }
 
 // ===== АУТЕНТИФИКАЦИЯ =====
-
 async function registerUser(email, password, fullName, role) {
     return apiRequest('/auth/register', {
         method: 'POST',
@@ -73,35 +88,42 @@ async function registerUser(email, password, fullName, role) {
             email,
             password,
             full_name: fullName,
-            role: role
+            role: role.toUpperCase() // Бэкенд ждёт ADMIN/TEACHER/ACCOUNTANT
         })
     });
 }
 
 async function loginUser(email, password) {
     const formData = new FormData();
-    formData.append('username', email);
+    formData.append('username', email); // FastAPI OAuth2 ждёт 'username'
     formData.append('password', password);
     
     const response = await fetch(`${API_BASE_URL}/auth/login`, {
         method: 'POST',
         body: formData
+        // Content-Type не ставим — браузер сам выставит multipart/form-data
     });
-    
+
     if (!response.ok) {
         const error = await response.json().catch(() => ({}));
         throw new Error(error.detail || 'Ошибка входа');
     }
-    
+
     const data = await response.json();
-    
+
     if (data.access_token) {
         setToken(data.access_token);
-        const userData = JSON.parse(atob(data.access_token.split('.')[1]));
-        localStorage.setItem('userRole', userData.role);
-        localStorage.setItem('userName', userData.full_name || userData.sub);
+        try {
+            // Декодируем payload JWT (вторая часть токена)
+            const payload = JSON.parse(atob(data.access_token.split('.')[1]));
+            localStorage.setItem('userRole', payload.role?.toLowerCase() || '');
+            localStorage.setItem('userName', payload.full_name || payload.sub || '');
+            localStorage.setItem('userEmail', payload.sub || '');
+            localStorage.setItem('isLoggedIn', 'true');
+        } catch (e) {
+            console.warn('Не удалось декодировать JWT:', e);
+        }
     }
-    
     return data;
 }
 
@@ -111,41 +133,21 @@ async function getCurrentUser() {
 
 async function logoutUser() {
     try {
-        await apiRequest('/auth/logout', { method: 'POST' });
+        // Если бэкенд поддерживает /auth/logout — раскомментируйте:
+        // await apiRequest('/auth/logout', { method: 'POST' });
     } catch (error) {
         console.error('Ошибка выхода:', error);
     }
     clearToken();
 }
 
-async function changePassword(oldPassword, newPassword) {
-    const formData = new FormData();
-    formData.append('old_password', oldPassword);
-    formData.append('new_password', newPassword);
-    
-    const response = await fetch(`${API_BASE_URL}/auth/change-password`, {
-        method: 'POST',
-        headers: {
-            'Authorization': `Bearer ${getToken()}`
-        },
-        body: formData
-    });
-    
-    if (!response.ok) {
-        const error = await response.json().catch(() => ({}));
-        throw new Error(error.detail || 'Ошибка смены пароля');
-    }
-    
-    return await response.json();
-}
-
 // ===== ГРУППЫ =====
-
 async function getGroups() {
     return apiRequest('/groups/');
 }
 
 async function getMyGroups() {
+    // Для учителей — только свои группы
     return apiRequest('/groups/me');
 }
 
@@ -174,7 +176,6 @@ async function deleteGroup(groupId) {
 }
 
 // ===== ДЕТИ =====
-
 async function getChildren(groupId = null) {
     const url = groupId ? `/children/?group_id=${groupId}` : '/children/';
     return apiRequest(url);
@@ -192,7 +193,6 @@ async function createChild(childData) {
 }
 
 // ===== ПОСЕЩАЕМОСТЬ =====
-
 async function getDailyJournal(groupId, date) {
     return apiRequest(`/attendance/group/${groupId}/date/${date}`);
 }
@@ -209,10 +209,12 @@ async function getAttendance(groupId, year, month) {
                 attendance.push(...journal.records);
             }
         } catch (error) {
-            console.error(`Ошибка загрузки за ${date}:`, error);
+            // 404 — просто нет записей за этот день, это нормально
+            if (error.code !== 404) {
+                console.error(`Ошибка загрузки за ${date}:`, error);
+            }
         }
     }
-    
     return attendance;
 }
 
@@ -220,31 +222,29 @@ async function markAttendance(childId, date, status, comment = '') {
     return apiRequest('/attendance/', {
         method: 'POST',
         body: JSON.stringify({
-            child_id: childId,
+            child_id: parseInt(childId),
             date: date,
-            status: status,
+            status: status.toLowerCase(), // present/absent/sick/not_marked
             comment: comment
         })
     });
 }
 
 async function markAttendanceBulk(groupId, date, status) {
-    // Получаем всех детей группы
     const children = await getChildren(groupId);
-    
-    // Создаём объект attendance_data: { "child_id": "status" }
     const attendanceData = {};
-    children.forEach(child => {
-        attendanceData[child.id] = status;
-    });
     
+    children.forEach(child => {
+        attendanceData[child.id] = status.toLowerCase();
+    });
+
     return apiRequest('/attendance/bulk', {
         method: 'POST',
         body: JSON.stringify({
             group_id: parseInt(groupId),
             date: date,
             attendance_data: attendanceData,
-            default_status: status
+            default_status: status.toLowerCase()
         })
     });
 }
@@ -253,7 +253,7 @@ async function updateAttendance(attendanceId, status, comment = '') {
     return apiRequest(`/attendance/${attendanceId}`, {
         method: 'PUT',
         body: JSON.stringify({
-            status: status,
+            status: status.toLowerCase(),
             comment: comment
         })
     });
@@ -277,12 +277,12 @@ async function getChildAttendanceHistory(childId, startDate = null, endDate = nu
 async function getAttendanceStats(groupId, year, month) {
     const attendance = await getAttendance(groupId, year, month);
     const children = await getChildren(groupId);
-    
     const totalChildren = children.length;
+    
     let totalPresent = 0;
     let totalDays = 0;
     const byDay = {};
-    
+
     attendance.forEach(record => {
         const day = new Date(record.date).getDate();
         if (!byDay[day]) {
@@ -294,20 +294,20 @@ async function getAttendanceStats(groupId, year, month) {
         }
         totalDays++;
     });
-    
-    const attendanceRate = totalDays > 0 ? (totalPresent / (totalChildren * Object.keys(byDay).length)) * 100 : 0;
-    
+
+    const totalPossible = totalChildren * Object.keys(byDay).length;
+    const attendanceRate = totalPossible > 0 ? (totalPresent / totalPossible) * 100 : 0;
+
     return {
         total_children: totalChildren,
         total_present: totalPresent,
         total_days: totalDays,
-        attendance_rate: attendanceRate,
+        attendance_rate: Math.round(attendanceRate * 10) / 10,
         by_day: byDay
     };
 }
 
 // ===== ПЛАТЕЖИ И ОТЧЁТЫ =====
-
 async function getGroupPaymentReport(groupId, month) {
     return apiRequest(`/payments/report/group/${groupId}?month=${month}`);
 }
@@ -352,11 +352,9 @@ async function generateReport(reportType, groupId, month) {
         const [year, monthNum] = month.split('-');
         return await getAttendanceStats(groupId, parseInt(year), parseInt(monthNum));
     }
-    
     if (reportType === 'financial') {
         return await getGroupPaymentReport(groupId, month);
     }
-    
     return { message: 'Отчёт сгенерирован' };
 }
 
@@ -369,7 +367,7 @@ async function exportToExcel(groupId, month) {
         const percent = ((data.present / data.total) * 100).toFixed(1);
         csv += `${day},${data.present},${data.total},${percent}%\n`;
     });
-    
+
     const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -377,12 +375,11 @@ async function exportToExcel(groupId, month) {
     a.download = `attendance_group_${groupId}_${month}.csv`;
     a.click();
     window.URL.revokeObjectURL(url);
-    
+
     return { success: true };
 }
 
 // ===== AI ПРОГНОЗЫ =====
-
 async function getAIPrediction(groupId, targetDate = null) {
     let url = `/ai/predictions/group/${groupId}`;
     if (targetDate) url += `?target_date=${targetDate}`;
@@ -404,11 +401,8 @@ async function getPaymentPrediction(groupId, targetMonth = null) {
 }
 
 // ===== АУДИТ ЛОГИ =====
-
 async function getAuditLogs(params = {}) {
     const queryParams = [];
-    
-    // Проверяем что params не null и не undefined
     if (params && typeof params === 'object') {
         if (params.limit) queryParams.push(`limit=${params.limit}`);
         if (params.user_id) queryParams.push(`user_id=${params.user_id}`);
@@ -417,7 +411,6 @@ async function getAuditLogs(params = {}) {
         if (params.start_date) queryParams.push(`start_date=${params.start_date}`);
         if (params.end_date) queryParams.push(`end_date=${params.end_date}`);
     }
-    
     const url = queryParams.length ? `/audit/logs?${queryParams.join('&')}` : '/audit/logs';
     return apiRequest(url);
 }
@@ -426,8 +419,27 @@ async function getAuditStats() {
     return apiRequest('/audit/stats');
 }
 
-// ===== ЗДОРОВЬЕ =====
+// ===== УТИЛИТЫ =====
+function hasRole(requiredRole) {
+    const userRole = localStorage.getItem('userRole')?.toLowerCase();
+    const roleMap = {
+        'admin': ['admin'],
+        'teacher': ['admin', 'teacher'],
+        'accountant': ['admin', 'accountant']
+    };
+    return roleMap[requiredRole]?.includes(userRole) || false;
+}
 
+function requireRole(requiredRole, redirectUrl = 'index.html') {
+    if (!hasRole(requiredRole)) {
+        clearToken();
+        window.location.href = redirectUrl;
+        return false;
+    }
+    return true;
+}
+
+// ===== ЗДОРОВЬЕ =====
 async function healthCheck() {
     try {
         const response = await fetch(`${API_BASE_URL}/health`);
@@ -437,4 +449,4 @@ async function healthCheck() {
     }
 }
 
-console.log('✅ API загружен (v3.0 - полное соответствие бэкенду)');
+console.log('✅ API v3.1 loaded — FastAPI compatible, no mocks 🚀');

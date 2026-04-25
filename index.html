@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Регистрация - Детский сад</title>
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body class="auth-page">
     <div class="clouds-background">
@@ -17,7 +17,7 @@
         <div class="auth-card">
             <!-- Форма регистрации -->
             <div id="registerForm">
-                <h1>🌸 Регистрация 🌸</h1>
+               <h1>🌸 Регистрация 🌸</h1> 
                 <p class="subtitle">Введите ваш email и пароль, чтобы зарегистрироваться</p>
                 
                 <form onsubmit="handleRegister(event)">
@@ -77,6 +77,9 @@
         </div>
     </div>
 
+    <!-- Сначала загружаем api.js чтобы функции были доступны -->
+    <script src="js/api.js"></script>
+    
     <script>
         // ===== ПЕРЕКЛЮЧЕНИЕ ФОРМ =====
         function showLogin() {
@@ -124,7 +127,7 @@
             }
             
             try {
-                // Используем функцию из api.js
+
                 const response = await fetch('http://127.0.0.1:8000/auth/register', {
                     method: 'POST',
                     headers: {
@@ -164,6 +167,7 @@
                 formData.append('username', email);
                 formData.append('password', password);
                 
+
                 const response = await fetch('http://127.0.0.1:8000/auth/login', {
                     method: 'POST',
                     body: formData
@@ -234,6 +238,5 @@
             }
         });
     </script>
-    <script src="js/api.js"></script>
 </body>
 </html>
