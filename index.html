@@ -18,7 +18,7 @@
             <!-- Форма регистрации -->
             <div id="registerForm">
                <h1>🌸 Регистрация 🌸</h1> 
-                <p class="subtitle">Введите ваш email и пароль, чтобы зарегистрироваться</p>
+                <p class="subtitle">Заполните форму, чтобы отправить заявку</p>
                 
                 <form onsubmit="handleRegister(event)">
                     <div class="form-group">
@@ -36,14 +36,13 @@
                     <div class="form-group">
                         <select id="regRole" required>
                             <option value="">Выберите роль</option>
-                            <!-- ⚠️ ВАЖНО: значения в нижнем регистре! -->
-                            <option value="admin">Администратор</option>
-                            <option value="teacher">Воспитатель</option>
-                            <option value="accountant">Бухгалтер</option>
+                            <option value="TEACHER">👨‍🏫 Воспитатель</option>
+                            <option value="ACCOUNTANT">💰 Бухгалтер</option>
                         </select>
+                        <small style="color: #718096; display: block; margin-top: 5px;">После регистрации администратор должен подтвердить ваш аккаунт</small>
                     </div>
                     
-                    <button type="submit" class="btn-primary">Зарегистрироваться</button>
+                    <button type="submit" class="btn-primary">Отправить заявку</button>
                 </form>
                 
                 <div class="auth-footer">
@@ -77,11 +76,9 @@
         </div>
     </div>
 
-    <!-- Сначала загружаем api.js чтобы функции были доступны -->
-    <script src="js/api.js"></script>
+    <script src="api.js"></script>
     
     <script>
-        // ===== ПЕРЕКЛЮЧЕНИЕ ФОРМ =====
         function showLogin() {
             document.getElementById('registerForm').style.display = 'none';
             document.getElementById('loginForm').style.display = 'block';
@@ -92,7 +89,6 @@
             document.getElementById('registerForm').style.display = 'block';
         }
 
-        // ===== УВЕДОМЛЕНИЯ =====
         function showNotification(message, type = 'info') {
             const notification = document.createElement('div');
             notification.style.cssText = `
@@ -105,49 +101,56 @@
                 border-radius: 10px;
                 box-shadow: 0 4px 15px rgba(0,0,0,0.2);
                 z-index: 9999;
+                animation: slideIn 0.3s ease;
             `;
             notification.textContent = message;
             document.body.appendChild(notification);
             
-            setTimeout(() => notification.remove(), 3000);
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => notification.remove(), 300);
+            }, 5000);
         }
 
-        // ===== РЕГИСТРАЦИЯ =====
         async function handleRegister(e) {
             e.preventDefault();
             
             const email = document.getElementById('regEmail').value.trim();
             const password = document.getElementById('regPassword').value;
             const full_name = document.getElementById('regFullName').value.trim();
-            const role = document.getElementById('regRole').value;
+            let role = document.getElementById('regRole').value;
             
             if (password.length < 6) {
                 showNotification('Пароль должен быть не менее 6 символов', 'error');
                 return;
             }
             
+            if (!role) {
+                showNotification('Выберите роль', 'error');
+                return;
+            }
+            
+            role = role.toUpperCase();
+            
             try {
-
                 const response = await fetch('http://127.0.0.1:8000/auth/register', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        email,
-                        password,
-                        full_name,
-                        role
-                    })
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password, full_name, role })
                 });
                 
                 if (response.ok) {
-                    showNotification('Регистрация успешна! Теперь войдите.', 'success');
-                    showLogin();
+                    showNotification('✅ Заявка отправлена! После подтверждения администратором вы сможете войти.', 'success');
+                    
+                    document.getElementById('regEmail').value = '';
+                    document.getElementById('regPassword').value = '';
+                    document.getElementById('regFullName').value = '';
+                    document.getElementById('regRole').value = '';
+                    
+                    setTimeout(() => showLogin(), 3000);
                 } else {
                     const error = await response.json();
-                    const message = error.detail || 'Ошибка регистрации';
-                    showNotification(message, 'error');
+                    showNotification(error.detail || 'Ошибка регистрации', 'error');
                 }
             } catch (error) {
                 console.error('Ошибка:', error);
@@ -155,7 +158,6 @@
             }
         }
 
-        // ===== ВХОД =====
         async function handleLogin(e) {
             e.preventDefault();
             
@@ -167,7 +169,6 @@
                 formData.append('username', email);
                 formData.append('password', password);
                 
-
                 const response = await fetch('http://127.0.0.1:8000/auth/login', {
                     method: 'POST',
                     body: formData
@@ -176,10 +177,8 @@
                 if (response.ok) {
                     const data = await response.json();
                     
-                    // Сохраняем токен
                     localStorage.setItem('jwt_token', data.access_token);
                     
-                    // Декодируем токен для получения роли
                     const payload = JSON.parse(atob(data.access_token.split('.')[1]));
                     const role = payload.role?.toLowerCase();
                     
@@ -190,7 +189,6 @@
                     
                     showNotification('Вход выполнен успешно!', 'success');
                     
-                    // Перенаправление по роли
                     setTimeout(() => {
                         switch(role) {
                             case 'admin':
@@ -206,7 +204,6 @@
                                 showNotification('Неизвестная роль пользователя', 'error');
                         }
                     }, 500);
-                    
                 } else {
                     const error = await response.json();
                     showNotification(error.detail || 'Неверный email или пароль', 'error');
@@ -217,13 +214,11 @@
             }
         }
 
-        // Проверка авторизации при загрузке
         document.addEventListener('DOMContentLoaded', () => {
             const token = localStorage.getItem('jwt_token');
             const role = localStorage.getItem('userRole');
             
             if (token && role) {
-                // Если уже авторизован, перенаправляем
                 switch(role) {
                     case 'admin':
                         window.location.href = 'admin.html';
@@ -237,6 +232,19 @@
                 }
             }
         });
+
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn { 
+                from { transform: translateX(100%); opacity: 0; } 
+                to { transform: translateX(0); opacity: 1; } 
+            } 
+            @keyframes slideOut { 
+                from { transform: translateX(0); opacity: 1; } 
+                to { transform: translateX(100%); opacity: 0; } 
+            }
+        `;
+        document.head.appendChild(style);
     </script>
 </body>
 </html>

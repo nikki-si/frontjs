@@ -1,5 +1,5 @@
 // ✅ НАСТРОЙКИ API
-const API_BASE_URL = 'http://localhost:8000'; // FastAPI по умолчанию на 8000
+const API_BASE_URL = 'http://localhost:8000';
 
 // ===== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ =====
 function getToken() {
@@ -26,7 +26,6 @@ function getAuthHeaders(isFormData = false) {
     if (!isFormData) {
         headers['Content-Type'] = 'application/json';
     }
-    // Если isFormData — браузер сам выставит multipart/form-data с boundary
     return headers;
 }
 
@@ -45,7 +44,6 @@ async function apiRequest(endpoint, options = {}) {
     try {
         const response = await fetch(url, config);
         
-        // 🔐 Обработка 401 — сессия истекла
         if (response.status === 401) {
             clearToken();
             const error = new Error('SESSION_EXPIRED');
@@ -53,7 +51,6 @@ async function apiRequest(endpoint, options = {}) {
             throw error;
         }
         
-        // 🔒 Обработка 403 — нет прав
         if (response.status === 403) {
             const error = new Error('ACCESS_DENIED');
             error.code = 403;
@@ -65,7 +62,6 @@ async function apiRequest(endpoint, options = {}) {
             throw new Error(error.detail || `Ошибка: ${response.status}`);
         }
         
-        // Для 204 No Content
         if (response.status === 204) {
             return null;
         }
@@ -88,20 +84,19 @@ async function registerUser(email, password, fullName, role) {
             email,
             password,
             full_name: fullName,
-            role: role.toUpperCase() // Бэкенд ждёт ADMIN/TEACHER/ACCOUNTANT
+            role: role.toUpperCase()
         })
     });
 }
 
 async function loginUser(email, password) {
     const formData = new FormData();
-    formData.append('username', email); // FastAPI OAuth2 ждёт 'username'
+    formData.append('username', email);
     formData.append('password', password);
     
     const response = await fetch(`${API_BASE_URL}/auth/login`, {
         method: 'POST',
         body: formData
-        // Content-Type не ставим — браузер сам выставит multipart/form-data
     });
 
     if (!response.ok) {
@@ -114,7 +109,6 @@ async function loginUser(email, password) {
     if (data.access_token) {
         setToken(data.access_token);
         try {
-            // Декодируем payload JWT (вторая часть токена)
             const payload = JSON.parse(atob(data.access_token.split('.')[1]));
             localStorage.setItem('userRole', payload.role?.toLowerCase() || '');
             localStorage.setItem('userName', payload.full_name || payload.sub || '');
@@ -132,12 +126,6 @@ async function getCurrentUser() {
 }
 
 async function logoutUser() {
-    try {
-        // Если бэкенд поддерживает /auth/logout — раскомментируйте:
-        // await apiRequest('/auth/logout', { method: 'POST' });
-    } catch (error) {
-        console.error('Ошибка выхода:', error);
-    }
     clearToken();
 }
 
@@ -147,7 +135,6 @@ async function getGroups() {
 }
 
 async function getMyGroups() {
-    // Для учителей — только свои группы
     return apiRequest('/groups/me');
 }
 
@@ -209,7 +196,6 @@ async function getAttendance(groupId, year, month) {
                 attendance.push(...journal.records);
             }
         } catch (error) {
-            // 404 — просто нет записей за этот день, это нормально
             if (error.code !== 404) {
                 console.error(`Ошибка загрузки за ${date}:`, error);
             }
@@ -224,7 +210,7 @@ async function markAttendance(childId, date, status, comment = '') {
         body: JSON.stringify({
             child_id: parseInt(childId),
             date: date,
-            status: status.toLowerCase(), // present/absent/sick/not_marked
+            status: status.toLowerCase(),
             comment: comment
         })
     });
@@ -274,37 +260,22 @@ async function getChildAttendanceHistory(childId, startDate = null, endDate = nu
     return apiRequest(url);
 }
 
+// ✅ БЫСТРАЯ ВЕРСИЯ (ОДИН ЗАПРОС) - РЕКОМЕНДУЕТСЯ
 async function getAttendanceStats(groupId, year, month) {
-    const attendance = await getAttendance(groupId, year, month);
-    const children = await getChildren(groupId);
-    const totalChildren = children.length;
-    
-    let totalPresent = 0;
-    let totalDays = 0;
-    const byDay = {};
-
-    attendance.forEach(record => {
-        const day = new Date(record.date).getDate();
-        if (!byDay[day]) {
-            byDay[day] = { present: 0, total: totalChildren };
-        }
-        if (record.status === 'present') {
-            byDay[day].present++;
-            totalPresent++;
-        }
-        totalDays++;
-    });
-
-    const totalPossible = totalChildren * Object.keys(byDay).length;
-    const attendanceRate = totalPossible > 0 ? (totalPresent / totalPossible) * 100 : 0;
-
-    return {
-        total_children: totalChildren,
-        total_present: totalPresent,
-        total_days: totalDays,
-        attendance_rate: Math.round(attendanceRate * 10) / 10,
-        by_day: byDay
-    };
+    try {
+        console.log(`Запрос статистики для группы ${groupId}, ${year}-${month}`);
+        const result = await apiRequest(`/attendance/stats/group/${groupId}?year=${year}&month=${month}`);
+        return result;
+    } catch (error) {
+        console.error(`Ошибка получения статистики для группы ${groupId}:`, error);
+        return {
+            total_children: 0,
+            total_present: 0,
+            total_days: 0,
+            attendance_rate: 0,
+            by_day: {}
+        };
+    }
 }
 
 // ===== ПЛАТЕЖИ И ОТЧЁТЫ =====
@@ -363,10 +334,14 @@ async function exportToExcel(groupId, month) {
     const stats = await getAttendanceStats(groupId, parseInt(year), parseInt(monthNum));
     
     let csv = 'День,Присутствовало,Всего,Процент\n';
-    Object.entries(stats.by_day).forEach(([day, data]) => {
-        const percent = ((data.present / data.total) * 100).toFixed(1);
-        csv += `${day},${data.present},${data.total},${percent}%\n`;
-    });
+    if (stats.by_day) {
+        Object.entries(stats.by_day).forEach(([day, data]) => {
+            const percent = ((data.present / data.total) * 100).toFixed(1);
+            csv += `${day},${data.present},${data.total},${percent}%\n`;
+        });
+    } else {
+        csv += 'Нет данных,0,0,0%\n';
+    }
 
     const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
     const url = window.URL.createObjectURL(blob);
@@ -449,4 +424,4 @@ async function healthCheck() {
     }
 }
 
-console.log('✅ API v3.1 loaded — FastAPI compatible, no mocks 🚀');
+console.log('✅ API v5.0 — Полная версия, дубликаты удалены 🚀');

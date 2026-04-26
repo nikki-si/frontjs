@@ -28,6 +28,11 @@
                     <span class="nav-icon">👥</span>
                     <span>Пользователи</span>
                 </a>
+                <a href="#" class="nav-item" data-section="pending">
+                    <span class="nav-icon">📝</span>
+                    <span>Заявки</span>
+                    <span id="pendingCount" class="badge" style="display: none; background: #f56565; color: white; border-radius: 50%; padding: 2px 8px; font-size: 12px; margin-left: 8px;">0</span>
+                </a>
                 <a href="#" class="nav-item" data-section="reports">
                     <span class="nav-icon">📄</span>
                     <span>Отчёты</span>
@@ -232,10 +237,35 @@
                     <button class="btn-primary" onclick="saveSettings()">Сохранить настройки</button>
                 </div>
             </div>
+
+            <!-- Секция: Заявки -->
+            <div id="section-pending" class="admin-section">
+                <div class="section-header">
+                    <h3>📋 Заявки на регистрацию</h3>
+                    <p style="color: #718096;">Пользователи, ожидающие подтверждения</p>
+                </div>
+                <div class="table-container">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>ФИО</th>
+                                <th>Email</th>
+                                <th>Запрошенная роль</th>
+                                <th>Дата заявки</th>
+                                <th>Группа (для учителя)</th>
+                                <th>Действия</th>
+                            </tr>
+                        </thead>
+                        <tbody id="pendingUsersTable">
+                            <tr><td colspan="6" style="text-align: center;">Загрузка...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </main>
     </div>
 
-    <script src="admin.js"></script>
     <script src="api.js"></script>
+    <script src="admin.js"></script>
 </body>
 </html>
