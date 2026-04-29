@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Панель администратора</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/png" sizes="64x64" href="favicon64x64.png">
 </head>
 <body class="admin-page">
     <div class="clouds-background">
@@ -59,33 +60,16 @@
                 <div class="big-stat">
                     <h3>Общий уровень посещаемости</h3>
                     <p class="big-value">94.7%</p>
-                </div>
-
-                <div class="users-list">
-                    <h3>Управление пользователями</h3>
-                    <div class="user-item">
-                        <div class="user-avatar">👩‍🏫</div>
-                        <div class="user-info">
-                            <strong>Анна Петрова</strong>
-                            <span>Администратор</span>
+                    <div class="users-list">
+                        <h3>Управление пользователями</h3>
+                        <div class="user-item" onclick="showSection('users')" style="cursor: pointer;">
+                            <div class="user-avatar">👥</div>
+                            <div class="user-info">
+                                <strong>Перейти к управлению</strong>
+                                <span>Нажмите, чтобы открыть список пользователей</span>
+                            </div>
+                            <button class="btn-small">→</button>
                         </div>
-                        <button class="btn-small">→</button>
-                    </div>
-                    <div class="user-item">
-                        <div class="user-avatar">👨‍</div>
-                        <div class="user-info">
-                            <strong>Дмитрий Соколов</strong>
-                            <span>Воспитатель</span>
-                        </div>
-                        <button class="btn-small">→</button>
-                    </div>
-                    <div class="user-item">
-                        <div class="user-avatar">👩‍⚕️</div>
-                        <div class="user-info">
-                            <strong>Елена Волкова</strong>
-                            <span>Медсестра</span>
-                        </div>
-                        <button class="btn-small">→</button>
                     </div>
                 </div>
             </div>
@@ -99,11 +83,11 @@
                 <table class="admin-table">
                     <thead>
                         <tr>
-                            <th>ФИО</th>
-                            <th>Роль</th>
-                            <th>Email</th>
-                            <th>Группа</th>
-                            <th>Статус</th>
+                            <th onclick="sortTable(0, 'string')">ФИО <span class="sort-icon">↕️</span></th>
+                            <th onclick="sortTable(1, 'string')">Роль <span class="sort-icon">↕️</span></th>
+                            <th onclick="sortTable(2, 'string')">Email <span class="sort-icon">↕️</span></th>
+                            <th onclick="sortTable(3, 'string')">Группа <span class="sort-icon">↕️</span></th>
+                            <th onclick="sortTable(4, 'string')">Статус <span class="sort-icon">↕️</span></th>
                             <th>Действия</th>
                         </tr>
                     </thead>

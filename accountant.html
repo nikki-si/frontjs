@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Кабинет бухгалтера</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/png" sizes="64x64" href="favicon64x64.png">
 </head>
 <body class="accountant-page">
     <div class="clouds-background">
@@ -120,10 +121,7 @@
                     <h3>Динамика посещаемости (7 дней)</h3>
                     <div class="line-chart-wrapper">
                         <svg class="line-svg" viewBox="0 0 500 200" preserveAspectRatio="none">
-                            <!-- Линия графика -->
-                            <polyline points="50,140 120,120 190,150 260,80 330,100 400,160 470,170" 
-                                      fill="none" stroke="#ffb6c1" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-                            <!-- Точки -->
+                            <polyline points="" fill="none" stroke="#ffb6c1" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
                             <circle cx="50" cy="140" r="6" fill="#ffb6c1" stroke="white" stroke-width="2"/>
                             <circle cx="120" cy="120" r="6" fill="#ffb6c1" stroke="white" stroke-width="2"/>
                             <circle cx="190" cy="150" r="6" fill="#ffb6c1" stroke="white" stroke-width="2"/>
@@ -133,13 +131,7 @@
                             <circle cx="470" cy="170" r="6" fill="#ffb6c1" stroke="white" stroke-width="2"/>
                         </svg>
                         <div class="line-labels">
-                            <span>Пн</span>
-                            <span>Вт</span>
-                            <span>Ср</span>
-                            <span>Чт</span>
-                            <span>Пт</span>
-                            <span>Сб</span>
-                            <span>Вс</span>
+                            <span>Пн</span><span>Вт</span><span>Ср</span><span>Чт</span><span>Пт</span><span>Сб</span><span>Вс</span>
                         </div>
                     </div>
                 </div>
@@ -162,8 +154,8 @@
                             <label>Период:</label>
                             <input type="month" id="reportMonth" value="2026-03">
                         </div>
-                        <button class="btn-primary" onclick="generateReport()">Сгенерировать PDF</button>
-                        <button class="btn-secondary" onclick="exportToExcel()">Экспорт в Excel</button>
+                        <button class="btn-primary" onclick="generatePDF()">📄 Сгенерировать PDF</button>
+                        <button class="btn-secondary" onclick="exportReportToExcel()">Экспорт в Excel</button>
                     </div>
                 </div>
             </div>
@@ -203,5 +195,6 @@
 
     <script src="accountant.js"></script>
     <script src="api.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 </body>
 </html>

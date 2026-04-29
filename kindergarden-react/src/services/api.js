@@ -121,12 +121,12 @@ async function loginUser(email, password) {
     return data;
 }
 
-async function getCurrentUser() {
-    return apiRequest('/auth/me');
-}
-
 async function logoutUser() {
     clearToken();
+}
+
+async function getCurrentUser() {
+    return apiRequest('/auth/me');
 }
 
 // ===== ГРУППЫ =====
@@ -260,7 +260,6 @@ async function getChildAttendanceHistory(childId, startDate = null, endDate = nu
     return apiRequest(url);
 }
 
-// ✅ БЫСТРАЯ ВЕРСИЯ (ОДИН ЗАПРОС) - РЕКОМЕНДУЕТСЯ
 async function getAttendanceStats(groupId, year, month) {
     try {
         console.log(`Запрос статистики для группы ${groupId}, ${year}-${month}`);
@@ -399,26 +398,6 @@ async function getAuditStats() {
     return apiRequest('/audit/stats');
 }
 
-// ===== УТИЛИТЫ =====
-function hasRole(requiredRole) {
-    const userRole = localStorage.getItem('userRole')?.toLowerCase();
-    const roleMap = {
-        'admin': ['admin'],
-        'teacher': ['admin', 'teacher'],
-        'accountant': ['admin', 'accountant']
-    };
-    return roleMap[requiredRole]?.includes(userRole) || false;
-}
-
-function requireRole(requiredRole, redirectUrl = 'index.html') {
-    if (!hasRole(requiredRole)) {
-        clearToken();
-        window.location.href = redirectUrl;
-        return false;
-    }
-    return true;
-}
-
 // ===== ЗДОРОВЬЕ =====
 async function healthCheck() {
     try {
@@ -429,4 +408,50 @@ async function healthCheck() {
     }
 }
 
+// Создаём объект API для экспорта
+const api = {
+    registerUser,
+    loginUser,
+    logoutUser,
+    getCurrentUser,
+    getGroups,
+    getMyGroups,
+    getGroup,
+    createGroup,
+    updateGroup,
+    deleteGroup,
+    getChildren,
+    getChildrenByGroup,
+    createChild,
+    getDailyJournal,
+    getAttendance,
+    markAttendance,
+    markAttendanceBulk,
+    updateAttendance,
+    deleteAttendance,
+    getChildAttendanceHistory,
+    getAttendanceStats,
+    getGroupPaymentReport,
+    autoCalculatePayments,
+    createPayment,
+    getChildPayments,
+    updatePayment,
+    deletePayment,
+    generateReport,
+    exportToExcel,
+    getAIPrediction,
+    trainAIModel,
+    trainPaymentModel,
+    getPaymentPrediction,
+    getAuditLogs,
+    getAuditStats,
+    healthCheck,
+    // Alias для совместимости
+    login: loginUser,
+    register: registerUser,
+    logout: logoutUser
+};
+
 console.log('✅ API v5.0 — Полная версия, дубликаты удалены 🚀');
+
+export default api;

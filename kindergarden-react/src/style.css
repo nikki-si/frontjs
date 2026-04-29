@@ -1323,3 +1323,573 @@ input:checked + .slider:before {
 .group-tag .remove-group:hover {
     color: #e53e3e;
 }
+/* Анимации для уведомлений */
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOut {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+/* Стили для ошибок форм */
+.error-text {
+  color: #f56565;
+  font-size: 12px;
+  margin-top: 5px;
+  display: block;
+}
+
+input.error, select.error {
+  border-color: #f56565 !important;
+}
+
+/* ===== АДМИН ПАНЕЛЬ - ОРИГИНАЛЬНЫЕ СТИЛИ ===== */
+
+/* Хедер админа */
+.admin-page .header {
+  background: white;
+  border-radius: 16px;
+  padding: 20px 30px;
+  margin-bottom: 25px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.admin-page .header-content h1 {
+  font-size: 24px;
+  color: #2d3748;
+  margin-bottom: 5px;
+}
+
+.admin-page .position {
+  color: #718096;
+  font-size: 14px;
+}
+
+.admin-page .btn-logout {
+  padding: 10px 20px;
+  background: #f56565;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.3s;
+}
+
+.admin-page .btn-logout:hover {
+  background: #e53e3e;
+}
+
+/* Секции */
+.admin-section {
+  display: none;
+}
+
+.admin-section.active {
+  display: block;
+  animation: fadeIn 0.3s ease;
+}
+
+/* Большая статистика */
+.big-stat {
+  background: white;
+  border-radius: 16px;
+  padding: 40px;
+  text-align: center;
+  margin-bottom: 30px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+}
+
+.big-value {
+  font-size: 72px;
+  font-weight: 700;
+  background: linear-gradient(135deg, #ffb6c1 0%, #87ceeb 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Таблица пользователей - оригинальный стиль */
+.admin-table {
+  width: 100%;
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  border-collapse: collapse;
+}
+
+.admin-table th,
+.admin-table td {
+  padding: 15px;
+  text-align: left;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.admin-table th {
+  background: linear-gradient(135deg, #ffeef8 0%, #e8f4ff 100%);
+  font-weight: 600;
+  color: #2d3748;
+  cursor: pointer;
+}
+
+.admin-table th:hover {
+  background: linear-gradient(135deg, #ffd6e4 0%, #d4e8ff 100%);
+}
+
+.admin-table td {
+  color: #4a5568;
+}
+
+/* Статус */
+.status {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.status.active {
+  background: #c6f6d5;
+  color: #22543d;
+}
+
+/* Кнопки действий */
+.btn-icon {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  margin-right: 8px;
+  opacity: 0.7;
+  transition: opacity 0.3s;
+  padding: 5px;
+}
+
+.btn-icon:hover {
+  opacity: 1;
+}
+
+/* Кнопки */
+.btn-primary {
+  width: auto;
+  padding: 12px 24px;
+  background: linear-gradient(135deg, #ffb6c1 0%, #87ceeb 100%);
+  border: none;
+  border-radius: 12px;
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(255, 182, 193, 0.4);
+}
+
+/* Выбор группы */
+.group-select-small {
+  padding: 6px 10px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 12px;
+  background: white;
+  cursor: pointer;
+  margin-right: 5px;
+}
+
+/* Сетка статистики */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+}
+
+.stat-box {
+  background: white;
+  border-radius: 16px;
+  padding: 25px;
+  text-align: center;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+}
+
+.stat-number {
+  font-size: 42px;
+  font-weight: 700;
+  background: linear-gradient(135deg, #ffb6c1 0%, #87ceeb 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Настройки */
+.settings-group {
+  background: white;
+  border-radius: 16px;
+  padding: 30px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+}
+
+.setting-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 0;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.setting-item:last-child {
+  border-bottom: none;
+}
+
+/* Переключатель */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 30px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #e2e8f0;
+  transition: 0.4s;
+  border-radius: 30px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 22px;
+  width: 22px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  transition: 0.4s;
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  background: linear-gradient(135deg, #ffb6c1 0%, #87ceeb 100%);
+}
+
+input:checked + .slider:before {
+  transform: translateX(30px);
+}
+
+/* Секция пользователей */
+.section-header {
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.section-header h3 {
+  font-size: 20px;
+  color: #2d3748;
+}
+
+/* Список пользователей */
+.users-list {
+  background: white;
+  border-radius: 16px;
+  padding: 25px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  margin-top: 20px;
+}
+
+.user-item {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 15px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.user-item:last-child {
+  border-bottom: none;
+}
+
+.user-avatar {
+  font-size: 32px;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ffeef8;
+  border-radius: 50%;
+}
+
+.user-info {
+  flex: 1;
+}
+
+.user-info strong {
+  display: block;
+  color: #2d3748;
+  margin-bottom: 4px;
+}
+
+.user-info span {
+  color: #718096;
+  font-size: 14px;
+}
+
+.btn-small {
+  padding: 12px 24px;
+  background: linear-gradient(135deg, #87ceeb 0%, #98d8e8 100%);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.btn-delete {
+  padding: 12px 24px;
+  background: #f56565;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  transition: background 0.3s;
+}
+
+.btn-delete:hover {
+  background: #e53e3e;
+}
+
+/* Таблица заявок */
+.table-container {
+  background: white;
+  border-radius: 16px;
+  padding: 25px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  overflow-x: auto;
+}
+
+.group-select {
+  padding: 8px 12px;
+  border: 2px solid #e2e8f0;
+  border-radius: 10px;
+  font-size: 14px;
+  background: white;
+  cursor: pointer;
+}
+
+/* Отчёты */
+.reports-list {
+  margin-top: 25px;
+}
+
+.report-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 25px;
+  background: #ffffff;
+  border-radius: 12px;
+  margin-bottom: 15px;
+  gap: 20px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.report-info {
+  flex: 1;
+}
+
+.report-info strong {
+  display: block;
+  color: #2d3748;
+  margin-bottom: 8px;
+}
+
+.report-info span {
+  color: #718096;
+  font-size: 13px;
+}
+
+.report-actions {
+  display: flex;
+  gap: 12px;
+}
+
+/* Бейдж */
+.badge {
+  background: #f56565;
+  color: white;
+  border-radius: 50%;
+  padding: 2px 8px;
+  font-size: 12px;
+  margin-left: 8px;
+}
+
+/* Анимации */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+  .admin-page .container {
+    flex-direction: column;
+  }
+  
+  .sidebar {
+    position: static;
+    width: 100%;
+    height: auto;
+  }
+  
+  .main-content {
+    margin-left: 0;
+  }
+  
+  .admin-table {
+    font-size: 12px;
+  }
+  
+  .admin-table th,
+  .admin-table td {
+    padding: 10px;
+  }
+  
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .report-item {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .section-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+/* ===== АДМИН ПАНЕЛЬ - НОВЫЕ СТИЛИ ===== */
+
+.admin-page {
+  min-height: 100vh;
+}
+
+.admin-container {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* Сайдбар */
+.admin-sidebar {
+  width: 280px;
+  background: white;
+  box-shadow: 2px 0 15px rgba(0, 0, 0, 0.08);
+  position: fixed;
+  left: 0;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  z-index: 100;
+  padding: 30px 20px;
+}
+
+/* Основной контент - на всю оставшуюся ширину */
+.admin-main {
+  flex: 1;
+  margin-left: 280px;
+  padding: 30px;
+  width: calc(100% - 280px);
+  min-height: 100vh;
+}
+
+/* Секции на всю ширину */
+.admin-main .big-stat,
+.admin-main .admin-table,
+.admin-main .table-container,
+.admin-main .settings-group,
+.admin-main .stats-grid,
+.admin-main .reports-list {
+  width: 100%;
+}
+
+/* Таблица на всю ширину */
+.admin-main .admin-table {
+  width: 100%;
+  display: table;
+}
+
+/* Секция хедер (без лишнего) */
+.admin-main .section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+  .admin-sidebar {
+    position: static;
+    width: 100%;
+    height: auto;
+  }
+  
+  .admin-main {
+    margin-left: 0;
+    width: 100%;
+  }
+  
+  .admin-container {
+    flex-direction: column;
+  }
+}

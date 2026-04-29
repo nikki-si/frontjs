@@ -20,7 +20,46 @@ document.addEventListener('DOMContentLoaded', async function() {
     await loadInitialData();
     await loadAttendanceStats();
 });
+// Сортировка таблицы
+let sortColumn = null;
+let sortDirection = 'asc';
 
+function sortTable(column, type = 'string') {
+    const tbody = document.querySelector('#section-users .admin-table tbody');
+    const rows = Array.from(tbody.querySelectorAll('tr'));
+    
+    // Меняем направление сортировки
+    if (sortColumn === column) {
+        sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
+    } else {
+        sortColumn = column;
+        sortDirection = 'asc';
+    }
+    
+    rows.sort((a, b) => {
+        let aVal = a.cells[column].textContent;
+        let bVal = b.cells[column].textContent;
+        
+        if (type === 'number') {
+            aVal = parseFloat(aVal) || 0;
+            bVal = parseFloat(bVal) || 0;
+        }
+        
+        if (sortDirection === 'asc') {
+            return aVal > bVal ? 1 : -1;
+        } else {
+            return aVal < bVal ? 1 : -1;
+        }
+    });
+    
+    tbody.innerHTML = '';
+    rows.forEach(row => tbody.appendChild(row));
+    
+    // Обновляем иконки сортировки в заголовках
+    document.querySelectorAll('.sort-icon').forEach(icon => icon.textContent = '↕️');
+    const header = document.querySelector(`#section-users .admin-table th:nth-child(${column + 1}) .sort-icon`);
+    if (header) header.textContent = sortDirection === 'asc' ? '↑' : '↓';
+}
 async function loadInitialData() {
     try {
         await Promise.all([
@@ -652,6 +691,7 @@ function logout() {
     localStorage.removeItem('userName');
     window.location.href = 'index.html';
 }
+
 
 // ===== ЭКСПОРТ ФУНКЦИЙ ДЛЯ HTML =====
 window.addUser = addUser;

@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Воспитатель - Детский сад</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/png" sizes="64x64" href="favicon64x64.png">
 </head>
 <body>
     <!-- Фон с облачками -->
@@ -77,91 +78,6 @@
             <div class="summary-card">
                 <span class="summary-label">Отсутствуют сегодня</span>
                 <span class="summary-value" id="absentToday">0</span>
-            </div>
-        </div>
-
-        <!-- Вкладки -->
-        <div class="tabs">
-            <button class="tab-btn active" onclick="switchTab('journal')">📋 Журнал</button>
-            <button class="tab-btn" onclick="switchTab('statistics')">📈 Статистика</button>
-            <button class="tab-btn" onclick="switchTab('reports')">📄 Отчёты</button>
-            <button class="tab-btn" onclick="switchTab('ai')">🤖 AI Прогноз</button>
-        </div>
-
-        <!-- Контент вкладок -->
-        <div class="tab-content">
-            <!-- Журнал (активен по умолчанию) -->
-            <div id="journal" class="tab-panel active">
-                <p style="color: #718096; text-align: center;">📊 Данные отображаются в таблице выше</p>
-            </div>
-
-            <!-- Статистика -->
-            <div id="statistics" class="tab-panel">
-                <div class="stats-cards">
-                    <div class="stat-card">
-                        <h3>Средняя посещаемость</h3>
-                        <div class="stat-value" id="avgAttendance">—</div>
-                    </div>
-                    <div class="stat-card">
-                        <h3>Лучший день</h3>
-                        <div class="stat-value" id="bestDay">—</div>
-                    </div>
-                    <div class="stat-card">
-                        <h3>Дней в месяце</h3>
-                        <div class="stat-value" id="daysCount">—</div>
-                    </div>
-                </div>
-                <div class="chart-container">
-                    <div class="bar-chart" id="attendanceChart">
-                        <!-- График добавляется динамически -->
-                    </div>
-                </div>
-            </div>
-
-            <!-- Отчёты -->
-            <div id="reports" class="tab-panel">
-                <div class="report-options">
-                    <div class="report-option">
-                        <label>Тип отчёта:</label>
-                        <select id="reportType">
-                            <option value="monthly">Ежемесячный</option>
-                            <option value="attendance">По посещаемости</option>
-                            <option value="financial">Финансовый</option>
-                        </select>
-                    </div>
-                    <div class="report-option">
-                        <label>Период:</label>
-                        <input type="month" id="reportMonth">
-                    </div>
-                    <button class="btn-small" onclick="generateReport()">📄 Сгенерировать</button>
-                    <button class="btn-secondary" onclick="exportToExcel()">📥 Экспорт в Excel</button>
-                </div>
-                <div id="reportResult" style="margin-top: 20px; color: #718096;"></div>
-            </div>
-
-            <!-- AI Прогноз -->
-            <div id="ai" class="tab-panel">
-                <div class="ai-cards">
-                    <div class="ai-card risk-low">
-                        <div class="ai-icon">🟢</div>
-                        <div class="ai-value" id="aiDisease">Загрузка...</div>
-                        <div class="ai-desc">Риск заболеваний</div>
-                    </div>
-                    <div class="ai-card risk-medium">
-                        <div class="ai-icon">🟡</div>
-                        <div class="ai-value" id="aiAbsence">Загрузка...</div>
-                        <div class="ai-desc">Риск отсутствия</div>
-                    </div>
-                    <div class="ai-card risk-high">
-                        <div class="ai-icon">🔴</div>
-                        <div class="ai-value" id="aiTransition">Загрузка...</div>
-                        <div class="ai-desc">Риск адаптации</div>
-                    </div>
-                </div>
-                <div class="ai-info" style="text-align: center; color: #718096;">
-                    <p><strong>Точность прогноза:</strong> <span id="aiAccuracy">—</span>%</p>
-                    <p style="font-size: 12px; margin-top: 10px;">На основе: температуры, посещаемости, жалоб родителей</p>
-                </div>
             </div>
         </div>
     </div>
