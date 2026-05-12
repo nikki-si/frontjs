@@ -7,7 +7,6 @@ import { AdminPage } from './components/Admin/AdminPage';
 import { TeacherPage } from './components/Teacher/TeacherPage';
 import { AccountantPage } from './components/Accountant/AccountantPage';
 import './style.css';
-import './App.css';
 
 function App() {
   return (

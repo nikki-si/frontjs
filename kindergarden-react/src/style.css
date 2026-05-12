@@ -1893,3 +1893,96 @@ input:checked + .slider:before {
     flex-direction: column;
   }
 }
+
+/* Стиль для кнопки "Болеет" */
+.attendance-btn.sick {
+  background: #ed8936;
+  color: white;
+}
+
+.attendance-btn.sick:hover {
+  background: #dd6b20;
+  transform: scale(1.1);
+}
+
+/* ===== АДМИН ПАНЕЛЬ ===== */
+.admin-container {
+  display: flex;
+  min-height: 100vh;
+}
+
+.admin-sidebar {
+  width: 280px;
+  background: white;
+  box-shadow: 2px 0 15px rgba(0, 0, 0, 0.08);
+  position: fixed;
+  left: 0;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  z-index: 100;
+  padding: 30px 20px;
+}
+
+.admin-main {
+  flex: 1;
+  margin-left: 280px;
+  padding: 30px;
+  width: calc(100% - 280px);
+  min-height: 100vh;
+}
+
+.admin-header {
+  background: white;
+  border-radius: 16px;
+  padding: 20px 30px;
+  margin-bottom: 25px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.admin-header-content h1 {
+  font-size: 24px;
+  color: #2d3748;
+  margin-bottom: 5px;
+}
+
+.admin-greeting {
+  color: #718096;
+  font-size: 14px;
+}
+
+.admin-logout-btn {
+  padding: 10px 20px;
+  background: #f56565;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.3s;
+}
+
+.admin-logout-btn:hover {
+  background: #e53e3e;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+  .admin-sidebar {
+    position: static;
+    width: 100%;
+    height: auto;
+  }
+  
+  .admin-main {
+    margin-left: 0;
+    width: 100%;
+  }
+  
+  .admin-container {
+    flex-direction: column;
+  }
+}

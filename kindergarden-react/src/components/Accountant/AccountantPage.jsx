@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { CloudBackground } from '../Common/CloudBackground';
 import { Notification } from '../Common/Notification';
+import { getFullGreeting } from '../../utils/helpers';
 import LoadingSpinner from '../Common/LoadingSpinner';
 import JournalTab from './JournalTab';
 import StatisticsTab from './StatisticsTab';
@@ -69,7 +70,7 @@ export const AccountantPage = () => {
         <header className="header">
           <div className="header-content">
             <h1>💰 Кабинет бухгалтера</h1>
-            <span className="position">{user?.name || 'Бухгалтер'}</span>
+            <span className="position">{getFullGreeting(user?.name)}</span>
           </div>
           <button className="btn-logout" onClick={logout}>🚪 Выйти</button>
         </header>

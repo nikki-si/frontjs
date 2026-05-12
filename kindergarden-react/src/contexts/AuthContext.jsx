@@ -1,4 +1,3 @@
-// src/contexts/AuthContext.jsx
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import api from '../services/api';
 
@@ -29,7 +28,7 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const login = async (email, password) => {
-    const data = await api.loginUser(email, password);
+    await api.loginUser(email, password);
     const role = localStorage.getItem('userRole');
     const name = localStorage.getItem('userName');
     
@@ -40,10 +39,34 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = () => {
+    const farewell = document.createElement('div');
+    farewell.style.cssText = `
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 15px 25px;
+      background: #48bb78;
+      color: white;
+      border-radius: 10px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      z-index: 9999;
+      animation: slideIn 0.3s ease;
+    `;
+    farewell.textContent = '👋 До свидания!';
+    document.body.appendChild(farewell);
+    
+    setTimeout(() => {
+      farewell.style.animation = 'slideOut 0.3s ease';
+      setTimeout(() => farewell.remove(), 300);
+    }, 2000);
+    
     api.logoutUser();
     setUser(null);
     setToken(null);
-    window.location.href = '/';
+    
+    setTimeout(() => {
+      window.location.href = '/login';
+    }, 1000);
   };
 
   const isAuthenticated = !!user && !!token;
@@ -64,4 +87,4 @@ export const AuthProvider = ({ children }) => {
       {children}
     </AuthContext.Provider>
   );
-};  
+};

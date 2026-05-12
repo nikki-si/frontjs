@@ -2,16 +2,13 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { CloudBackground } from '../Common/CloudBackground';
 import { Notification } from '../Common/Notification';
+import { getFullGreeting } from '../../utils/helpers';
 import LoadingSpinner from '../Common/LoadingSpinner';
 import AttendanceTable from './AttendanceTable';
-import StatisticsTab from './StatisticsTab';
-import ReportsTab from './ReportsTab';
-import AITab from './AITab';
 import api from '../../services/api';
 
 export const TeacherPage = () => {
   const { user, logout } = useAuth();
-  const [activeTab, setActiveTab] = useState('journal');
   const [groups, setGroups] = useState([]);
   const [currentGroupId, setCurrentGroupId] = useState(null);
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -57,27 +54,15 @@ export const TeacherPage = () => {
     localStorage.setItem('currentGroup', groupId);
   };
 
-  const renderTab = () => {
-    switch(activeTab) {
-      case 'journal':
-        return <AttendanceTable groupId={currentGroupId} currentDate={currentDate} showNotification={showNotification} />;
-      case 'statistics':
-        return <StatisticsTab groupId={currentGroupId} currentDate={currentDate} />;
-      case 'reports':
-        return <ReportsTab groupId={currentGroupId} currentDate={currentDate} showNotification={showNotification} />;
-      case 'ai':
-        return <AITab groupId={currentGroupId} />;
-      default:
-        return <AttendanceTable groupId={currentGroupId} currentDate={currentDate} showNotification={showNotification} />;
-    }
+  const markAllPresent = () => {
+    const event = new CustomEvent('markAllPresent', { detail: { groupId: currentGroupId, date: currentDate } });
+    window.dispatchEvent(event);
   };
 
-  const tabs = [
-    { id: 'journal', label: 'Журнал посещаемости', icon: '📖' },
-    { id: 'statistics', label: 'Статистика', icon: '📊' },
-    { id: 'reports', label: 'Отчёты', icon: '📄' },
-    { id: 'ai', label: 'AI Прогноз', icon: '🤖' }
-  ];
+  const markAllAbsent = () => {
+    const event = new CustomEvent('markAllAbsent', { detail: { groupId: currentGroupId, date: currentDate } });
+    window.dispatchEvent(event);
+  };
 
   const monthNames = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
 
@@ -89,8 +74,8 @@ export const TeacherPage = () => {
       <div className="container">
         <header className="header">
           <div className="header-content">
-            <h1>🌸 Кабинет воспитателя</h1>
-            <span className="position">{user?.name || 'Воспитатель'}</span>
+            <h1>🏫 Кабинет воспитателя</h1>
+            <span className="position">{getFullGreeting(user?.name)}</span>
           </div>
           <button className="btn-logout" onClick={logout}>🚪 Выйти</button>
         </header>
@@ -117,22 +102,14 @@ export const TeacherPage = () => {
             <span className="month-display">{monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}</span>
             <button className="btn-nav" onClick={() => changeMonth(1)}>▶</button>
           </div>
+          <div className="control-group">
+            <button className="btn-mass" onClick={markAllPresent}>✅ Все присутствуют</button>
+            <button className="btn-mass-absent" onClick={markAllAbsent}>❌ Все отсутствуют</button>
+          </div>
         </div>
 
-        <div className="tabs">
-          {tabs.map(tab => (
-            <button 
-              key={tab.id} 
-              className={`tab-btn ${activeTab === tab.id ? 'active' : ''}`} 
-              onClick={() => setActiveTab(tab.id)}
-            >
-              {tab.icon} {tab.label}
-            </button>
-          ))}
-        </div>
-
-        <div className="tab-content">
-          {renderTab()}
+        <div className="tab-content" style={{ padding: 0 }}>
+          <AttendanceTable groupId={currentGroupId} currentDate={currentDate} showNotification={showNotification} />
         </div>
       </div>
       {notification && <Notification message={notification.message} type={notification.type} onClose={() => setNotification(null)} />}
